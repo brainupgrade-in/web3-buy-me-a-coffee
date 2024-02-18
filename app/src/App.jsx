@@ -216,7 +216,7 @@ function Footer() {
           target="_blank"
           rel="noreferrer"
         >
-          Mohsin Khan.
+          Rajesh Gheware.
         </a>{" "}
         Check out the source code on{" "}
         <a
