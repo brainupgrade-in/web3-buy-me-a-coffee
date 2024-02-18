@@ -10,7 +10,34 @@ const contractAddress = "0x80c1496e7a659038900d7652edfabc49867acb4d";
 const contractAbi = abi.abi;
 const provider = new ethers.providers.Web3Provider(ethereum, "any");
 
+
 function App() {
+  const [isProviderAvailable, setIsProviderAvailable] = useState(false);
+
+  useEffect(() => {
+    checkEthereumProvider();
+  }, []);
+
+  const checkEthereumProvider = () => {
+    if (typeof window.ethereum !== 'undefined') {
+      setIsProviderAvailable(true);
+    } else {
+      setIsProviderAvailable(false);
+    }
+  };
+  const connectWallet = async () => {
+    if (!window.ethereum) {
+      alert("MetaMask is not installed. Please consider installing it: https://metamask.io/download.html");
+      return;
+    }
+    try {
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      setIsWalletConnected(true);
+      console.log("Connected account: ", accounts[0]);
+    } catch (error) {
+      console.error("Error connecting to MetaMask: ", error);
+    }
+  };
   const runWithdrawTips = async () => {
     // const res = await provider.getBalance(contractAddress);
     // const contractBal = ethers.utils.formatEther(res.toString());
@@ -18,19 +45,37 @@ function App() {
   };
 
   return (
+
     <div className="flex flex-col items-center justify-center gap-10 bg-background pt-16">
-      <div className="text-3xl font-medium">
-        Buy{" "}
-        <span onClick={runWithdrawTips} className="text-4xl text-primary">
-          Rajesh Gheware
-        </span>{" "}
-        A Coffee!
+      <div className="app">
+        {/* Your app content */}
+        {isProviderAvailable ? (
+          <div>
+
+            <div className="text-3xl font-medium">
+              Buy{" "}
+              <span onClick={runWithdrawTips} className="text-4xl text-primary">
+                Rajesh Gheware
+              </span>{" "}
+              A Coffee!
+            </div>
+            <SocialIcons />
+            <FormCard />
+            <div className="text-xl font-semibold">Recent Supporters</div>
+            <Supporters />
+            <Footer />
+
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center">
+            <p>Please install MetaMask to use this dApp.</p>
+            <button onClick={connectWallet} className="connect-wallet-button">
+              Connect Wallet
+            </button>
+          </div>
+        )}
       </div>
-      <SocialIcons />
-      <FormCard />
-      <div className="text-xl font-semibold">Recent Supporters</div>
-      <Supporters />
-      <Footer />
+
     </div>
   );
 }
